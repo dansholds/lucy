@@ -14,4 +14,14 @@ export default slackChannel({
       .join("\n");
     return { auth, context: [`Thread context since last reply:\n\n${transcript}`] };
   },
+  events: {
+    "authorization.required"(eventData, channel) {
+      const userId = channel.state.triggeringUserId;
+      if (!userId || !eventData.authorization?.url) return;
+      void channel.postDirectMessage(
+        userId,
+        `Hi! I need to connect to Linear before I can answer that. Tap here to authorize: ${eventData.authorization.url}`,
+      );
+    },
+  },
 });
